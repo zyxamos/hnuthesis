@@ -1,14 +1,12 @@
 # 湖南大学硕士学位论文 LaTeX 模板
 
-[![Compile and publish the release](https://github.com/yusanshi/hnuthesis/actions/workflows/main.yml/badge.svg)](https://github.com/yusanshi/hnuthesis/actions/workflows/main.yml) [![GitHub Releases](https://img.shields.io/github/v/release/yusanshi/hnuthesis)](https://github.com/yusanshi/hnuthesis/releases/latest)
-
-本项目是湖南大学硕士学位论文 LaTeX 模板 hnuthesis，按照《[湖南大学研究生学位论文撰写规范](http://gra.hnu.edu.cn/info/1276/3444.htm)》的要求编写（**个人能力、精力有限，不保证完全符合规范，_Use at your own risk!_**）。
-
-下载地址：[GitHub Releases](https://github.com/yusanshi/hnuthesis/releases)、[Overleaf](https://www.overleaf.com/latex/templates/hu-nan-da-xue-shuo-shi-xue-wei-lun-wen-latex-mo-ban-hnuthesis/dbjwjghhvmmd)。
-
-本项目基于 [Gwinel/Latex](https://github.com/Gwinel/Latex/)。
-
-关于 LaTeX 的安装、配置、编写的相关问题，请参阅其他类似项目（如 [thuthesis](https://github.com/tuna/thuthesis) 和 [ustcthesis](https://github.com/ustctug/ustcthesis) 等）。
+本项目基于 [yusanshi/hnuthesis](https://github.com/yusanshi/hnuthesis)。首先非常感谢原作者所做的工作，大大节省了我书写毕业论文的时间。然而 xxx。因此本项目仅做以下微小的修改
+- 修改参考文献编译引擎：`natbib` -> `biblatex`
+- 表格 (tabu)
+- 其它更适合数学论文编写的模板（例如字体、宏定义等）
+  - 数学字体
+  - 一些通用的宏定义，例如 `\setl{R}`
+  - 修复了引理的 `autorefname` 出错的问题
 
 ## 关键文件说明
 
@@ -64,11 +62,7 @@
 
    > 注意：脚本的运行需要 Unix style 的命令行环境，对于 Windows 用户，可以使用安装完 Git 客户端之后的 Git Bash。
 
-### 2. Overleaf（版本可能较旧）
-
-<https://www.overleaf.com/latex/templates/hu-nan-da-xue-shuo-shi-xue-wei-lun-wen-latex-mo-ban-hnuthesis/dbjwjghhvmmd>
-
-### 3. GitHub Actions
+### 2. GitHub Actions
 
 1. 通过 `Use this template` 或 Fork 创建项目；
 
@@ -82,12 +76,3 @@
    待 GitHub Actions 结束后在 releases 中下载新编译的 `main.pdf` 和 `main-for-word.pdf` 文件。
 
    ![image](https://user-images.githubusercontent.com/36265606/116044616-b6b30e00-a6a3-11eb-82ff-e8bba576da16.png)
-
-## 转 Word 文件
-
-使用 <https://www.adobe.com/acrobat/online/pdf-to-word.html> 转换 `main-for-word.pdf` 文件。第二次转换文件时需要登录 Adobe 账号才能下载，建议在浏览器的“无痕浏览”“隐私模式”等模式下访问以跳过强制登录。
-
-## TODO
-
-- 重新整理 `hnuthesis.cls` 和 `hnunumerical.bst`，支持博士学位；
-- [issue] 转 Word 时，文献引用符号后面的文字变小。
