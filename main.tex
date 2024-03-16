@@ -7,6 +7,9 @@
 \usepackage{algorithmicx,algpseudocode}
 \usepackage{float}
 
+% 参考文献
+\addbibresource{references.bib}
+
 % 学校代码
 \hnucode{10532}
 % 学校名称
@@ -64,7 +67,10 @@
 \input{chapters/ch2}
 \input{chapters/test}
 \input{chapters/summary}
-\bibliography{references}
+
+% 参考文献
+% \bibliography{references}
+\printbibliography[heading=bibintoc]\clearpage
 
 \appendix
 \input{chapters/publications}

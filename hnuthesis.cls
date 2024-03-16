@@ -5,14 +5,14 @@
 % 变量
 \newif\if@hnu@doctor
 \newif\if@hnu@numerical
-\newif\if@hnu@super
+\@hnu@numericaltrue % 参考文献默认采取数字引用
+\newif\if@hnu@authoryear
 \newif\if@hnu@pdf
 \DeclareOption{doctor}{\@hnu@doctortrue}
 \DeclareOption{print}{\@hnu@pdffalse}
 \DeclareOption{pdf}{\@hnu@pdftrue}
-\DeclareOption{super}{\@hnu@numericaltrue\@hnu@supertrue}
-\DeclareOption{numbers}{\@hnu@numericaltrue\@hnu@superfalse}
-\DeclareOption{authoryear}{\@hnu@numericalfalse}
+\DeclareOption{numbers}{\@hnu@numericaltrue \@hnu@authoryearfalse}
+\DeclareOption{authoryear}{\@hnu@numericalfalse \@hnu@authoryeartrue}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{ctexbook}}
 \ExecuteOptions{doctor,chinese,print,super}
 \ProcessOptions\relax
@@ -648,65 +648,57 @@
   \parindent 2\ccwd%
   \noindent
   \hb@xt@2\ccwd{\hss\@makefnmark}#1}
-\RequirePackage[sort&compress]{natbib}
-\newcommand\bibstyle@super{\bibpunct{[}{]}{,}{s}{,}{\textsuperscript{,}}}
-\newcommand\bibstyle@numbers{\bibpunct{[}{]}{,}{n}{,}{,}}
-\newcommand\bibstyle@authoryear{\bibpunct{(}{)}{;}{a}{,}{,}}
-\def\tmp@numerical{numerical}
-\def\tmp@authoryear{authoryear}
-\newcommand\hnubibstyle[1]{%
-  \def\tmp@gbt{#1}%
-  \ifx\tmp@gbt\tmp@numerical%
-    \bibliographystyle{hnunumerical}%
-  \fi%
-}
 
+%% 参考文献 biblatex //AMOS
+
+% first pass options
+\PassOptionsToPackage{
+    backend     = biber,
+    gbnamefmt   = lowercase,
+    gbpub       = false,
+    gbtitlelink = true,
+    sortlocale  = zh__pinyin,
+    uniquelist  = true,
+    isbn        = false,
+    doi         = false,
+    url         = false,
+    gbpunctin   = false,
+    gbfieldtype = true,
+}{biblatex}
+% then load packages
 \if@hnu@numerical
-  \if@hnu@super
-    \citestyle{super}
-  \else
-    \citestyle{numbers}
-  \fi
-  \bibliographystyle{hnunumerical}%
+  \RequirePackage[style=gb7714-2015]{biblatex} 
 \else
-  \citestyle{authoryear}
-  \bibliographystyle{hnuauthoryear}%
+  \if@hnu@authoryear
+    \RequirePackage[style=gb7714-2015ay]{biblatex} 
+  \fi
 \fi
 
-% 引用
-\patchcmd\NAT@citexnum{%
-  \@ifnum{\NAT@ctype=\z@}{%
-    \if*#2*\else\NAT@cmt#2\fi
-  }{}%
-  \NAT@mbox{\NAT@@close}%
-}{%
-  \NAT@mbox{\NAT@@close}%
-  \@ifnum{\NAT@ctype=\z@}{%
-    \if*#2*\else\textsuperscript{#2}\fi
-  }{}%
-}{}{}
-\renewcommand\NAT@citesuper[3]{\ifNAT@swa
-\if*#2*\else#2\NAT@spacechar\fi
-\unskip\kern\p@\textsuperscript{\NAT@@open#1\NAT@@close\if*#3*\else#3\fi}%
-   \else #1\fi\endgroup}
-\renewcommand\NAT@citenum%
-    [3]{\ifNAT@swa\NAT@@open\if*#2*\else#2\NAT@spacechar\fi
-        #1\NAT@@close\if*#3*\else\textsuperscript{#3}\fi\else#1\fi\endgroup}
-\patchcmd{\NAT@citex}{%
-  \if*#2*\else\NAT@cmt#2\fi
-  \if\relax\NAT@date\relax\else\NAT@@close\fi
-}{%
-  \if\relax\NAT@date\relax\else\NAT@@close\fi
-  \if*#2*\else\textsuperscript{#2}\fi
-}{}{}
-\renewcommand\NAT@cite%
-    [3]{\ifNAT@swa\NAT@@open\if*#2*\else#2\NAT@spacechar\fi
-        #1\NAT@@close\if*#3*\else\textsuperscript{#3}\fi\else#1\fi\endgroup}
-%    
-\renewcommand\bibfont{\normalfont\fontsize{12pt}{20pt}\selectfont}
-\setlength{\bibsep}{0bp}
-\setlength{\bibhang}{2\ccwd}
-\renewcommand\@biblabel[1]{[#1]\hfill}
+% 关于 option - gbpunctin = false
+%   对于 inbook, incollection, inproceedings 类型的条目，文献标题满足格式 `title <in or incn> booktitle`
+%   gb7714-2015 规定 in = //, incn = //，然而部分学校或组织可能认为使用符号 // 很奇怪，gb7714-2015 提供了选项 gbpunction 控制该行为
+%   gbpunctuation = true (default) -> 按照 gb7714-2015 规定 in = //, incn = //
+%   gbpunctuation = false -> in = in, incn = 见 (这是 hnu 的规定)
+
+% 多作者截断关键字 et al -> 等
+\DefineBibliographyStrings{english}{
+        andincite         = {和},
+        andincitecn       = {和},
+        andothersincitecn = {等},
+        andothersincite   = {等},
+}
+
+% 学位论文需要额外说明学位论文级别 (with gbfieldtype = true)
+% biblatex 会首先检查参考文献的 bib 条目中是否存在 type 域，如果不存在则按照以下方式说明
+\DefineBibliographyStrings{english}{
+    mathesis={str you want ma thesis},
+    mathesiscn={硕士学位论文},
+    phdthesis={str you want for phd thesis},
+    phdthesiscn={博士学位论文}
+}
+
+
+%% 链接
 \urlstyle{same}
 \g@addto@macro\UrlBreaks{%
   \do\a\do\b\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j%
@@ -716,11 +708,6 @@
   \do\K\do\L\do\M\do\N\do\O\do\P\do\Q\do\R\do\S\do\T%
   \do\U\do\V\do\W\do\X\do\Y\do\Z%
   \do\1\do\2\do\3\do\4\do\5\do\6\do\7\do\8\do\9\do\0%
-}
-\renewcommand\bibsection{%
-    \@mainmatterfalse
-    \chapter{\bibname}%
-    \@mainmattertrue
 }
 
 % 数学符号：

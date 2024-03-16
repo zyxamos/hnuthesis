@@ -25,3 +25,21 @@
 
 \section{参考文献 biblatex}
 
+第一个 \verb|\verb| 将产生奇怪的空白，为了以下内容对齐，写下这段废话
+
+\begin{table}[ht]
+    \caption{常用 cite 指令}
+    \centering
+    \begin{tabular}{l c l}
+        \hline
+        \verb|\parencite{he2016deep}| & $\Rightarrow$ & 引用\parencite{he2016deep} \\
+        \verb|\parencite[31]{he2016deep}| & $\Rightarrow$ & 引用\parencite[31]{he2016deep} \\
+        \verb|\cite{he2016deep}| & $\Rightarrow$ & 引用\cite{he2016deep} \\
+        \verb|\cite[31]{he2016deep}| & $\Rightarrow$ & 引用\cite[31]{he2016deep} \\
+        \verb|\upcite{he2016deep}| & $\Rightarrow$ & 引用\upcite{he2016deep} \\
+        \verb|\textcite{he2016deep}| & $\Rightarrow$ & \textcite{he2016deep} \\
+        \verb|\authornumcite{he2016deep}| & $\Rightarrow$ & \authornumcite{he2016deep} \\
+        \verb|\citeauthor{he2016deep}| & $\Rightarrow$ & \citeauthor{he2016deep} \\
+        \hline
+    \end{tabular}
+\end{table}
