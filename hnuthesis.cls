@@ -35,8 +35,8 @@
 \setmainfont{Times New Roman}
 \setsansfont{Arial}
 \setmonofont{Courier New}
-\setCJKmainfont{SimSun}
-\setCJKsansfont{SimHei}
+% \setCJKmainfont{SimSun} % //AMOS: simsun 没有黑体，ctex 默认的中文字体设置为{normal = simsun, bold = 微软雅黑, italic = 楷体}。因此认为 ctex 默认的字体设置更合理、并且满足模板要求（学校官方的没有关于粗体和斜体提供说明）
+% \setCJKsansfont{SimHei}
 \RequirePackage{hyperref}
 \hypersetup{
     bookmarksopen=true,
@@ -737,39 +737,45 @@
 %\newcommand*{\diff}{\mathop{}\!\mathrm{d}}
 %\DeclareMathOperator*{\argmax}{arg\,max}
 %\DeclareMathOperator*{\argmin}{arg\,min}
-% 数学定理：
-% 以下定义数学定理环境默认风格为 hnuplain。
-\newtheoremstyle{hnuplain}%
-    {}{}%
-    {}{2\ccwd}%
-    {\bfseries}{}%
-    {\ccwd}{}
-\theoremstyle{hnuplain}
-% 定义新的定理
 
-\newcommand\hnu@assertionname{断言}
-\newcommand\hnu@axiomname{公理}
-\newcommand\hnu@corollaryname{推论}
-\newcommand\hnu@definitionname{定义}
-\newcommand\hnu@examplename{例}
-\newcommand\hnu@lemmaname{引理}
-\newcommand\hnu@proofname{证明}
-\newcommand\hnu@propositionname{命题}
-\newcommand\hnu@remarkname{注}
-\newcommand\hnu@theoremname{定理}
-\newtheorem{theorem}                {\hnu@theoremname}     [chapter]
-\newtheorem{assertion}  [theorem]   {\hnu@assertionname}
-\newtheorem{axiom}      [theorem]   {\hnu@axiomname}
-\newtheorem{corollary}  [theorem]   {\hnu@corollaryname}
-\newtheorem{lemma}      [theorem]   {\hnu@lemmaname}
-\newtheorem{proposition}[theorem]   {\hnu@propositionname}
-\newtheorem{definition}             {\hnu@definitionname}  [chapter]
-\newtheorem{example}                {\hnu@examplename}     [chapter]
-\newtheorem*{remark}                {\hnu@remarkname}
+% 数学定理：//AMOS: 使用 thmtools 定义定理环境
+\RequirePackage{thmtools}
+
+% theorem
+\declaretheoremstyle[
+  headindent=2em,
+  headpunct={},
+  notefont=\bfseries,
+  bodyfont=\it, % 定理环境下采用斜体
+  postheadspace=1em
+]{theoremStyle}
+
+\declaretheorem[name=定理,style=theoremStyle,numberwithin=chapter]{theorem}
+\declaretheorem[name=引理,style=theoremStyle,numberlike=theorem]{lemma}
+\declaretheorem[name=命题,style=theoremStyle,numberlike=theorem]{proposition}
+\declaretheorem[name=推论,style=theoremStyle,numberlike=theorem]{corollary}
+\declaretheorem[name=断言,style=theoremStyle,numberlike=theorem]{assertion}
+\declaretheorem[name=公理,style=theoremStyle,numberlike=theorem]{axiom}
+
+% definition
+\declaretheoremstyle[
+  headindent=2em,
+  headpunct={},
+  notefont=\bfseries,
+  % bodyfont=\it, % 定义环境下不采用斜体
+  postheadspace=1em
+]{defStyle}
+
+\declaretheorem[name=定义,style=defStyle,numberwithin=chapter]{definition}
+\declaretheorem[name=算例,style=defStyle,numberwithin=chapter]{example}
+\declaretheorem[name=注,style=defStyle,numberwithin=chapter]{remark}
+
 % \pkg{amsthm} 单独定义了 proof 环境，这里重新定义以满足格式要求。
 % 原本模仿 \pkg{amsthm} 写成 |\item[\hskip\labelsep\hskip2\ccwd #1\hskip\ccwd]|，
 % 但是却会多出一些间隙。
-\renewenvironment{proof}[1][\proofname]{\par
+\newcommand\hnu@proofname{证明}
+\renewcommand{\qedsymbol}{$\blacksquare$} % the end symbol of proof
+\renewenvironment{proof}[1][\hnu@proofname]{\par
     \pushQED{\qed}%
     \normalfont \topsep6\p@\@plus6\p@\relax
     \trivlist
@@ -779,7 +785,7 @@
     }{%
     \popQED\endtrivlist\@endpefalse
 }
-\renewcommand\proofname\hnu@proofname
+
 
 % 算法和代码：
 % 算法环境
