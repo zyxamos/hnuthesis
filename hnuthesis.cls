@@ -155,7 +155,6 @@
   \fancyfoot[C]{\setfontsize{9pt}\thepage}
   \fancyheadoffset[LO,LE]{3mm}
   \fancyheadoffset[RO,RE]{-3mm}
-  \makeatletter
   \def\headrule{
     \if@fancyplain\let\headrulewidth\plainheadrulewidth\fi%
     \hrule\@height 1.0pt \@width\headwidth\vskip 1pt %上面线为1pt粗
@@ -664,6 +663,8 @@
     url         = false,
     gbpunctin   = false,
     gbfieldtype = true,
+    gbtype      = false, % 文献类型和载体标识符，例如期刊论文: true - [J], false - <什么都不输出>
+    % gbmedium    = false, % 文献载体标识，例如在线文章: true - [J/OL], false - [J]。当 gbtype == false 时，此选项无所谓设置什么都不会显示。 
 }{biblatex}
 % then load packages
 \if@hnu@numerical
@@ -676,25 +677,41 @@
 
 % 关于 option - gbpunctin = false
 %   对于 inbook, incollection, inproceedings 类型的条目，文献标题满足格式 `title <in or incn> booktitle`
-%   gb7714-2015 规定 in = //, incn = //，然而部分学校或组织可能认为使用符号 // 很奇怪，gb7714-2015 提供了选项 gbpunction 控制该行为
 %   gbpunctuation = true (default) -> 按照 gb7714-2015 规定 in = //, incn = //
-%   gbpunctuation = false -> in = in, incn = 见 (这是 hnu 的规定)
+%   gbpunctuation = false -> in = in, incn = 见
 
 % 多作者截断关键字 et al -> 等
 \DefineBibliographyStrings{english}{
         andincite         = {和},
         andincitecn       = {和},
-        andothersincitecn = {等},
-        andothersincite   = {等},
+        andothersincitecn = {等人},
+        andothersincite   = {等人},
 }
 
 % 学位论文需要额外说明学位论文级别 (with gbfieldtype = true)
-% biblatex 会首先检查参考文献的 bib 条目中是否存在 type 域，如果不存在则按照以下方式说明
+%   biblatex 会首先检查参考文献的 bib 条目中是否存在 type 域，如果不存在则按照以下方式输出
 \DefineBibliographyStrings{english}{
     mathesis={str you want ma thesis},
     mathesiscn={硕士学位论文},
     phdthesis={str you want for phd thesis},
     phdthesiscn={博士学位论文}
+}
+% 按照 HNU 的要求，
+%   - 格式为，[学校及学位论文级别].保存地点：保存单位
+%   - 例如，  湖南大学：博士学位论文. 长沙：湖南大学
+%   - 对于这样的输出要求，由于能力有限，暂时没法做到自动化显示参考文献，一种简单的方式为手动修改 bib 文件中 @phdthesis 条目的 type 和 school 域
+%       type = {[湖南大学博士学位论文]}
+%       school = {长沙：湖南大学}
+
+% 对于包括 arxiv(@misc) 在内的 online 条目，不显示 urldate
+%   对于 online 类型的文献 urldate 一定会输出（据文档所描述，这部分命令是在导言区定义的），因此唯一的办法就是在 bibitem 中删除 urldate
+%   urldate is splitted into (urlyear, urlmonth, urlday)
+%   clear urlyear is enough, when urlyear is lacking, do not print urlmonth and urlday
+\AtEveryBibitem{%
+    \ifentrytype{online}{
+        % \clearfield{url}%
+        \clearfield{urlyear}
+    }{}
 }
 
 
@@ -710,69 +727,60 @@
   \do\1\do\2\do\3\do\4\do\5\do\6\do\7\do\8\do\9\do\0%
 }
 
-% 数学符号：
-\RequirePackage{amsmath,amsthm}
-\makeatletter
-\g@addto@macro\normalsize{%
-  \setlength\abovedisplayskip{16pt}
-  \setlength\belowdisplayskip{16pt}
-  \setlength\abovedisplayshortskip{16pt}
-  \setlength\belowdisplayshortskip{16pt}
-}
-% \newcommand\eu{\mathrm{e}}
-% \newcommand\iu{\mathrm{i}}
-%\newcommand*{\diff}{\mathop{}\!\mathrm{d}}
-%\DeclareMathOperator*{\argmax}{arg\,max}
-%\DeclareMathOperator*{\argmin}{arg\,min}
 
-% 数学定理：//AMOS: 使用 thmtools 定义定理环境
-\RequirePackage{thmtools}
+%% 数学环境
+\RequirePackage{amsmath,amsthm,thmtools}
+
+% the flexible space before and after display equation (see https://www.overleaf.com/learn/latex/%5Cabovedisplayskip_and_related_commands)
+%   原模板采取固定的 16bp，对于充满公式的数学论文来说显得整体比较松散
+%   另外，通过 \@minus 2bp 增加灵活的调整空间
+\g@addto@macro\normalsize{%
+  \abovedisplayskip       = 10bp \@minus 2bp
+  \abovedisplayshortskip  = 10bp \@minus 2bp
+  \belowdisplayskip       = \abovedisplayskip
+  \belowdisplayshortskip  = \abovedisplayshortskip
+}
 
 % theorem
 \declaretheoremstyle[
-  headindent=2em,
-  headpunct={},
-  notefont=\bfseries,
-  bodyfont=\it, % 定理环境下采用斜体
-  postheadspace=1em
+  headindent    = 2em,
+  headpunct     = {},
+  notefont      = \normalfont\bfseries,
+  bodyfont      = \it, % 定理环境下采用斜体
+  postheadspace = 1em
 ]{theoremStyle}
-
-\declaretheorem[name=定理,style=theoremStyle,numberwithin=chapter]{theorem}
-\declaretheorem[name=引理,style=theoremStyle,numberlike=theorem]{lemma}
-\declaretheorem[name=命题,style=theoremStyle,numberlike=theorem]{proposition}
-\declaretheorem[name=推论,style=theoremStyle,numberlike=theorem]{corollary}
-\declaretheorem[name=断言,style=theoremStyle,numberlike=theorem]{assertion}
-\declaretheorem[name=公理,style=theoremStyle,numberlike=theorem]{axiom}
+\declaretheorem[name={定理},style=theoremStyle,numberwithin=chapter]{theorem}
+\declaretheorem[name={引理},style=theoremStyle,numberlike=theorem]{lemma}
+\declaretheorem[name={命题},style=theoremStyle,numberlike=theorem]{proposition}
+\declaretheorem[name={推论},style=theoremStyle,numberlike=theorem]{corollary}
+\declaretheorem[name={断言},style=theoremStyle,numberlike=theorem]{assertion}
+\declaretheorem[name={公理},style=theoremStyle,numberlike=theorem]{axiom}
 
 % definition
 \declaretheoremstyle[
-  headindent=2em,
-  headpunct={},
-  notefont=\bfseries,
-  % bodyfont=\it, % 定义环境下不采用斜体
-  postheadspace=1em
+  headindent    = 2em,
+  headpunct     = {},
+  notefont      = \normalfont\bfseries,
+  bodyfont      = \normalfont, % 定义环境下不采用斜体
+  postheadspace = 1em
 ]{defStyle}
+\declaretheorem[name={定义},style=defStyle,numberwithin=chapter]{definition}
+\declaretheorem[name={算例},style=defStyle,numberwithin=chapter]{example}
+\declaretheorem[name={注},style=defStyle,numberwithin=chapter]{remark}
 
-\declaretheorem[name=定义,style=defStyle,numberwithin=chapter]{definition}
-\declaretheorem[name=算例,style=defStyle,numberwithin=chapter]{example}
-\declaretheorem[name=注,style=defStyle,numberwithin=chapter]{remark}
-
-% \pkg{amsthm} 单独定义了 proof 环境，这里重新定义以满足格式要求。
-% 原本模仿 \pkg{amsthm} 写成 |\item[\hskip\labelsep\hskip2\ccwd #1\hskip\ccwd]|，
-% 但是却会多出一些间隙。
-\newcommand\hnu@proofname{证明}
-\renewcommand{\qedsymbol}{$\blacksquare$} % the end symbol of proof
-\renewenvironment{proof}[1][\hnu@proofname]{\par
-    \pushQED{\qed}%
-    \normalfont \topsep6\p@\@plus6\p@\relax
-    \trivlist
-        \item\relax\hskip2\ccwd
-        \textbf{#1}
-        \hskip\ccwd\ignorespaces
-    }{%
-    \popQED\endtrivlist\@endpefalse
-}
-
+% proof
+\declaretheoremstyle[
+  % spaceabove = -6pt, 
+  spacebelow    = 10bp, 
+  headindent    = 2em,
+  headpunct     = {},
+  headfont      = \normalfont\bfseries, 
+  bodyfont      = \normalfont,
+  postheadspace = 1em, 
+  qed           = $\blacksquare$, 
+]{proofStyle}
+\declaretheorem[name={证明}, style=proofStyle, unnumbered]{Proof}
+\renewcommand{\proof}{\Proof} % 不太优雅的实现。declaretheorem[...]{} 只能定义新的环境，不能重新定义环境
 
 % 算法和代码：
 % 算法环境

@@ -15,31 +15,56 @@
     非精确 PADMM 的收敛性
 \end{lemma}
 
-\begin{proof}
-    根据 xxx，说明了非精确 PADMM 的收敛性。
-\end{proof}
+使用 \verb|\autoref{<label>}| 引用定义、定理、引理
 
-\autoref{def.lag} 介绍了 Lagrangian 函数。
-\autoref{th.admm} 和 \autoref{th.padmm} 分别说明了非精确 ADMM 和 PADMM 的收敛性。
+\vspace{10bp}
+
+\begin{minipage}{.3\textwidth}
+    \verb|\autoref{def.lag}|\newline
+    \verb|\autoref{th.admm}|\newline
+    \verb|\autoref{th.padmm}|
+\end{minipage}
+~~~~
+\begin{minipage}{.3\textwidth}
+    \autoref{def.lag}\newline
+    \autoref{th.admm}\newline
+    \autoref{th.padmm}
+\end{minipage}
 
 
 \section{参考文献 biblatex}
-
-第一个 \verb|\verb| 将产生奇怪的空白，为了以下内容对齐，写下这段废话
 
 \begin{table}[ht]
     \caption{常用 cite 指令}
     \centering
     \begin{tabular}{l c l}
         \hline
-        \verb|\parencite{he2016deep}| & $\Rightarrow$ & 引用\parencite{he2016deep} \\
-        \verb|\parencite[31]{he2016deep}| & $\Rightarrow$ & 引用\parencite[31]{he2016deep} \\
-        \verb|\cite{he2016deep}| & $\Rightarrow$ & 引用\cite{he2016deep} \\
-        \verb|\cite[31]{he2016deep}| & $\Rightarrow$ & 引用\cite[31]{he2016deep} \\
-        \verb|\upcite{he2016deep}| & $\Rightarrow$ & 引用\upcite{he2016deep} \\
-        \verb|\textcite{he2016deep}| & $\Rightarrow$ & \textcite{he2016deep} \\
-        \verb|\authornumcite{he2016deep}| & $\Rightarrow$ & \authornumcite{he2016deep} \\
-        \verb|\citeauthor{he2016deep}| & $\Rightarrow$ & \citeauthor{he2016deep} \\
+        \verb|\parencite{golubMatrixComputations2013}| & $\Rightarrow$ & 引用\parencite{golubMatrixComputations2013} \\
+        \verb|\parencite[31]{golubMatrixComputations2013}| & $\Rightarrow$ & 引用\parencite[31]{golubMatrixComputations2013} \\
+        \verb|\cite{golubMatrixComputations2013}| & $\Rightarrow$ & 引用\cite{golubMatrixComputations2013} \\
+        \verb|\cite[31]{golubMatrixComputations2013}| & $\Rightarrow$ & 引用\cite[31]{golubMatrixComputations2013} \\
+        \verb|\upcite{golubMatrixComputations2013}| & $\Rightarrow$ & 引用\upcite{golubMatrixComputations2013} \\
+        \verb|\textcite{golubMatrixComputations2013}| & $\Rightarrow$ & \textcite{golubMatrixComputations2013} \\
+        \verb|\authornumcite{golubMatrixComputations2013}| & $\Rightarrow$ & \authornumcite{golubMatrixComputations2013} \\
+        \verb|\citeauthor{golubMatrixComputations2013}| & $\Rightarrow$ & \citeauthor{golubMatrixComputations2013} \\
+        \verb|\citeauthor{golubMatrixComputations2013}| & $\Rightarrow$ & \citeauthor{golubMatrixComputations2013} \\
         \hline
     \end{tabular}
 \end{table}
+
+重点关照的文献类型
+\begin{itemize}
+    \item 硕博学位论文 \parencite{libaiThesis}
+    \item arxiv 论文 \parencite{ishidaQuantitativeConvergenceDiscretization2023}
+\end{itemize}
+
+\subsection{关于硕博学位论文}
+
+按照 HNU 的要求，硕博学位论文的参考文献输出格式为 \fbox{[学校及学位论文级别].保存地点：保存单位}。
+例如 \fbox{[湖南大学：博士学位论文]. 长沙：湖南大学}。
+对于这样的输出要求，由于能力有限，暂时没法做到自动化输出参考文献。
+一种简单的方式为手动修改 bib 文件中 \verb|@phdthesis| 条目的 type 和 school 域
+\begin{itemize}
+    \item \verb|type = {[湖南大学博士学位论文]}|
+    \item \verb|school = {长沙：湖南大学}|
+\end{itemize}
