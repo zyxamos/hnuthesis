@@ -32,10 +32,10 @@
         See logs for more details.
     }
 }
-\setmainfont{Times New Roman}
-\setsansfont{Arial}
+\setmainfont{Times New Roman} % \rm, 衬线字体
+\setsansfont{Arial} % \sf, 无衬线字体
 \setmonofont{Courier New}
-% \setCJKmainfont{SimSun} % //AMOS: simsun 没有黑体，ctex 默认的中文字体设置为{normal = simsun, bold = 微软雅黑, italic = 楷体}。因此认为 ctex 默认的字体设置更合理、并且满足模板要求（学校官方的没有关于粗体和斜体提供说明）
+% \setCJKmainfont{SimSun}
 % \setCJKsansfont{SimHei}
 \RequirePackage{hyperref}
 \hypersetup{
@@ -217,6 +217,7 @@
     chapter = {
         format      = \centering\sffamily\bfseries\setfontsize{18pt},
         nameformat  = {},
+        numberformat += \rmfamily,
         % titleformat = \spacetitle,
         number      = \thechapter,
         aftername   = \hspace{\ccwd},
@@ -226,12 +227,14 @@
     },
     section = {
         format     = \bf\sffamily\setfontsize{15pt},
+        numberformat += \rmfamily,
         aftername  = \hspace{\ccwd},
         beforeskip = 12pt,
         afterskip  = 12pt,
     },
     subsection = {
         format     = \bf\sffamily\setfontsize{14pt},
+        numberformat += \rmfamily,
         aftername  = \hspace{\ccwd},
         % indent     = 2\ccwd,
         beforeskip = 6pt,
@@ -239,6 +242,7 @@
     },
     subsubsection = {
         format    = \sffamily\setfontsize{12.5pt},
+        numberformat += \rmfamily,
         number    = (\arabic{subsubsection}),
         % aftername = \hspace{\ccwd},
         beforeskip = 6pt,
@@ -247,12 +251,14 @@
     },
     paragraph = {
         format    = \sffamily\setfontsize{12.5pt},
+        numberformat += \rmfamily,
         number    = (\arabic{paragraph}),
         aftername = \hspace{\ccwd},
         % indent    = 3\ccwd,
     },
     subparagraph = {
         format    = \sffamily\setfontsize{12.5pt},
+        numberformat += \rmfamily,
         number    = \hnu@textcircled{subparagraph},
         aftername = \hspace{\ccwd},
         % indent    = 3\ccwd,
@@ -261,17 +267,13 @@
 
 % 书签
 \newcounter{hnu@pdfbookmark}
-\NewDocumentCommand\hnu@chapter{o m}{%
+\NewDocumentCommand\hnu@chapter{s m}{%
   \if@openright\cleardoublepage\else\clearpage\fi%
   \addtocounter{hnu@pdfbookmark}\@ne
-  \IfValueTF{#1}{%
-    \pdfbookmark[0]{#1}{hnuchapter.\thehnu@pdfbookmark}%
-    \chaptermark{#1}%
-  }{%
-    \pdfbookmark[0]{#2}{hnuchapter.\thehnu@pdfbookmark}%
-    \chaptermark{#2}%
-  }%
   \chapter*{#2}
+  \IfBooleanF{#1}{% \hnu@chapter{}
+    \addcontentsline{toc}{chapter}{\normalfont\sffamily#2}% 添加进目录，并且目录中不使用粗体
+  }% % else \hnu@chapter*{}}, do nothing
 }
 
 % 封面
@@ -282,12 +284,12 @@
         headheight=0cm, headsep=0.8cm,
         footskip=0.8cm}
     \pagenumbering{gobble}
-    \pdfbookmark[0]{封面}{titlepage}
+    % \pdfbookmark[0]{封面}{titlepage}
     \make@cntitle
-    \pdfbookmark[0]{Title page}{entitlepage}
+    % \pdfbookmark[0]{Title page}{entitlepage}
     \make@entitle
     \restoregeometry
-    \pdfbookmark[0]{原创性声明}{statement}
+    % \pdfbookmark[0]{原创性声明}{statement}
     \make@statement
 }
 
@@ -444,9 +446,9 @@
 \newcommand\make@statement{
     \newgeometry{left=3.3cm,right=3.3cm,top=3.5cm, bottom=3cm}
     \thispagestyle{plain}
-    \pagenumbering{Roman}
+    \pagenumbering{Roman} % 从原创性声明页面开始 Roman 计数
     \setcounter{page}{1}
-    \addcontentsline{toc}{chapter}{学位论文原创性声明和学位论文版权使用授权书}
+    \addcontentsline{toc}{chapter}{\normalfont\sffamily 学位论文原创性声明和学位论文版权使用授权书} % 目录中不使用粗体, //TODO: 此部分产生的超链接将跳转到错误的地方
     \setfontsize{12.5pt}[20pt]
     \vspace*{-0.15cm}
     \begin{center}
@@ -481,24 +483,22 @@
 % 摘要、关键字
 \newenvironment{abstract}{%
     \hnu@chapter{\hnu@abstractname}%
-    \addcontentsline{toc}{chapter}{\hnu@abstractname}
-    \setcounter{page}{2}
-  }{}
+    % \setcounter{page}{2} % 原创性声明处从 1 开始计数，此时不需要重新 set oage counter
+}{}
 \newenvironment{enabstract}{%
     \begingroup
         \ctexset{chapter/format=\centering\rmfamily\bfseries\setfontsize{18pt}}%
-        \hnu@chapter[Abstract]{\hnu@enabstractname}
+        \hnu@chapter*{\hnu@enabstractname}
     \endgroup
-    \addcontentsline{toc}{chapter}{\hnu@enabstractname}
-  }{}
-
+    \addcontentsline{toc}{chapter}{\rmfamily\hnu@enabstractname}% Abstract 不同于其它 \hnu@chapter，在目录中需要使用粗体
+}{}
 \newenvironment{summary}{%
-    \hnu@chapter{\hnu@summaryname}%
-    \addcontentsline{toc}{chapter}{\hnu@summaryname}
+  \chapter*{\hnu@summaryname}%
+  \addcontentsline{toc}{chapter}{\hnu@summaryname}
 }{}
 \newenvironment{acknowledgements}{%
-  \chapter{\hnu@acknowledgementsname}%
-  % \addcontentsline{toc}{chapter}{\hnu@acknowledgementsname}
+  \chapter*{\hnu@acknowledgementsname}%
+  \addcontentsline{toc}{chapter}{\normalfont\sffamily\hnu@acknowledgementsname}
 }{}
 
 \newcommand\keywords[1]{%
@@ -512,8 +512,8 @@
 \renewcommand\tableofcontents{%
     \clearpage%
     \setcounter{tocdepth}{2}
-    % \addcontentsline{toc}{chapter}{\hnu@tocname}
-    \hnu@chapter{\hnu@tocname}%
+    \pdfbookmark[0]{\hnu@tocname}{hnuchapter.\thehnu@pdfbookmark}\chaptermark{\hnu@tocname}% 将目录添加到 PDF bookmark 中，注意一定要先添加 PDF bookmark，再 \hnu@chapter，否则 PDF bookmark 将跳转到目录章节标题的下方的位置，而不是目录章节标题所在的位置
+    \hnu@chapter*{\hnu@tocname}% \hnu@chapter*{...}, 不在目录中的 chapter
     \@starttoc{toc}
 }
 
@@ -522,8 +522,8 @@
   \titlecontents{chapter}[0bp]
     {\addvspace{6bp}\bf\sffamily\setfontsize{12.5pt}[15pt]}
     {\contentspush{\thecontentslabel\unskip\hskip\ccwd\relax}}
-    {}{\hnu@leaders\setfontsize{12.5pt}[12.5pt]\contentspage}
-  \titlecontents{section}
+    {}{\hnu@leaders\setfontsize{12.5pt}[12.5pt]\textnormal{\contentspage}}
+    \titlecontents{section}
       [2\ccwd]
       {\setfontsize{12.5pt}[20pt]}
       {\contentspush{\thecontentslabel\hskip\ccwd\relax}}
@@ -546,20 +546,18 @@
 \renewcommand\listoffigures{%
     \clearpage
     \hnu@chapter{\listfigurename}%
-    \addcontentsline{toc}{chapter}{\listfigurename}
     \@starttoc{lof}}
     % 表目录同样
 \renewcommand\listoftables{%
     \clearpage
     \hnu@chapter{\listtablename}%
-    \addcontentsline{toc}{chapter}{\listtablename}
     \@starttoc{lot}}
 
 \newenvironment{notation}{%
     \cleardoublepage
     \thispagestyle{hnu@notation}
     \ctexset{chapter/format = \centering\rmfamily\setfontsize{12bp}}
-    \hnu@chapter{\hnu@notationname}
+    \addcontentsline{toc}{chapter}{\hnu@notationname}
     \setfontsize{10.5bp}[16bp]
     \setlength{\itemsep}{0bp}}{}
 \newdimen\bp@ \bp@=1bp
@@ -677,8 +675,9 @@
 
 % 关于 option - gbpunctin = false
 %   对于 inbook, incollection, inproceedings 类型的条目，文献标题满足格式 `title <in or incn> booktitle`
+%   gb7714-2015 规定 in = //, incn = //，然而部分学校或组织可能认为使用符号 // 很奇怪，gb7714-2015 提供了选项 gbpunction 控制该行为
 %   gbpunctuation = true (default) -> 按照 gb7714-2015 规定 in = //, incn = //
-%   gbpunctuation = false -> in = in, incn = 见
+%   gbpunctuation = false -> in = in, incn = 见 (这是 hnu 的规定)
 
 % 多作者截断关键字 et al -> 等
 \DefineBibliographyStrings{english}{
@@ -689,22 +688,19 @@
 }
 
 % 学位论文需要额外说明学位论文级别 (with gbfieldtype = true)
-%   biblatex 会首先检查参考文献的 bib 条目中是否存在 type 域，如果不存在则按照以下方式输出
+%   biblatex 会首先检查参考文献的 bib 条目中是否存在 type 域，如果不存在则按照以下方式说明
+%   按照 HNU 的要求，
+%     格式为，［学校及学位论文级别］.保存地点：保存单位
+%     例如，  湖南大学：博士学位论文. 长沙：湖南大学
+%   对于这样的输出要求，由于能力有限，暂时没法做到自动化显示参考文献
 \DefineBibliographyStrings{english}{
     mathesis={str you want ma thesis},
     mathesiscn={硕士学位论文},
     phdthesis={str you want for phd thesis},
     phdthesiscn={博士学位论文}
 }
-% 按照 HNU 的要求，
-%   - 格式为，[学校及学位论文级别].保存地点：保存单位
-%   - 例如，  湖南大学：博士学位论文. 长沙：湖南大学
-%   - 对于这样的输出要求，由于能力有限，暂时没法做到自动化显示参考文献，一种简单的方式为手动修改 bib 文件中 @phdthesis 条目的 type 和 school 域
-%       type = {[湖南大学博士学位论文]}
-%       school = {长沙：湖南大学}
 
 % 对于包括 arxiv(@misc) 在内的 online 条目，不显示 urldate
-%   对于 online 类型的文献 urldate 一定会输出（据文档所描述，这部分命令是在导言区定义的），因此唯一的办法就是在 bibitem 中删除 urldate
 %   urldate is splitted into (urlyear, urlmonth, urlday)
 %   clear urlyear is enough, when urlyear is lacking, do not print urlmonth and urlday
 \AtEveryBibitem{%
@@ -784,19 +780,19 @@
 
 % 算法和代码：
 % 算法环境
-\RequirePackage[algoruled, algochapter, lined, linesnumbered]{algorithm2e}
-\renewcommand{\algorithmcfname}{算法}
-\RequirePackage{listings}
-\lstset{
-    basicstyle=\small\ttfamily,
-    xleftmargin=2pc,
-    xrightmargin=2pc,
-    frame=single,
-    columns=flexible,
-    numbers=left,
-}
-\newcommand{\rememberlines}{\xdef\rememberedlines{\number\value{AlgoLine}}}
-\newcommand{\resumenumbering}{\setcounter{AlgoLine}{\rememberedlines}}
+% \RequirePackage[algoruled, algochapter, lined, linesnumbered]{algorithm2e}
+% \renewcommand{\algorithmcfname}{算法}
+% \RequirePackage{listings}
+% \lstset{
+%     basicstyle=\small\ttfamily,
+%     xleftmargin=2pc,
+%     xrightmargin=2pc,
+%     frame=single,
+%     columns=flexible,
+%     numbers=left,
+% }
+% \newcommand{\rememberlines}{\xdef\rememberedlines{\number\value{AlgoLine}}}
+% \newcommand{\resumenumbering}{\setcounter{AlgoLine}{\rememberedlines}}
 
 \RequirePackage[skins]{tcolorbox}
 \newtcolorbox{talgorithm}[2][]{%
