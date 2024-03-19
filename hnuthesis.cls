@@ -2,19 +2,44 @@
 \ProvidesClass{hnuthesis}
     [2017/07/19 v0.1 HNU thesis template]
 
-% 变量
-\newif\if@hnu@doctor
+% bibtype = {numerical, authoryear}, manual}
+% \RequirePackage{xkeyval}
+% \newif\if@hnu@numerical
+% \newif\if@hnu@authoryear
+% \@hnu@numericaltrue % 参考文献默认采取数字引用
+% \DeclareOptionX{bibtype}[numerical]{% default value: numerical - 参考文献默认采取数字引用
+  
+% }
+% \define@choicekey*+{hnuthesis.cls}{bibtype}[\val\nr]{numerical,authoryear}{%
+%   \ifcase\nr\relax
+%     \@hnu@numericaltrue
+%     \@hnu@authoryearfalse
+%   \or
+%     \@hnu@numericalfalse
+%     \@hnu@authoryeartrue
+%   \fi
+% }{%
+%   \PackageWarning{hnuthesis}{Error input for option "bibtype"}%
+% }
+% \ProcessOptionsX
+
+%% Options
 \newif\if@hnu@numerical
-\@hnu@numericaltrue % 参考文献默认采取数字引用
 \newif\if@hnu@authoryear
-\newif\if@hnu@pdf
+\newif\if@hnu@manualbib
+\DeclareOption{numbers}{\@hnu@numericaltrue \@hnu@authoryearfalse \@hnu@manualbibfalse} % 参考文献默认采取数字引用, by \ExecuteOptions{..., numbers}
+\DeclareOption{authoryear}{\@hnu@numericalfalse \@hnu@authoryeartrue \@hnu@manualbibfalse}
+\DeclareOption{manualbib}{\@hnu@numericalfalse \@hnu@authoryearfalse \@hnu@manualbibtrue}
+
+\newif\if@hnu@doctor
 \DeclareOption{doctor}{\@hnu@doctortrue}
+
+\newif\if@hnu@pdf
 \DeclareOption{print}{\@hnu@pdffalse}
 \DeclareOption{pdf}{\@hnu@pdftrue}
-\DeclareOption{numbers}{\@hnu@numericaltrue \@hnu@authoryearfalse}
-\DeclareOption{authoryear}{\@hnu@numericalfalse \@hnu@authoryeartrue}
+
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{ctexbook}}
-\ExecuteOptions{doctor,chinese,print,super}
+\ExecuteOptions{doctor,chinese,print,numbers}
 \ProcessOptions\relax
 \newif\if@hnu@addtocspace
 \if@hnu@pdf
@@ -646,70 +671,83 @@
   \noindent
   \hb@xt@2\ccwd{\hss\@makefnmark}#1}
 
-%% 参考文献 biblatex //AMOS
-
-% first pass options
-\PassOptionsToPackage{
-    backend     = biber,
-    gbnamefmt   = lowercase,
-    gbpub       = false,
-    gbtitlelink = true,
-    sortlocale  = zh__pinyin,
-    uniquelist  = true,
-    isbn        = false,
-    doi         = false,
-    url         = false,
-    gbpunctin   = false,
-    gbfieldtype = true,
-    gbtype      = false, % 文献类型和载体标识符，例如期刊论文: true - [J], false - <什么都不输出>
-    % gbmedium    = false, % 文献载体标识，例如在线文章: true - [J/OL], false - [J]。当 gbtype == false 时，此选项无所谓设置什么都不会显示。 
-}{biblatex}
-% then load packages
-\if@hnu@numerical
-  \RequirePackage[style=gb7714-2015]{biblatex} 
+%% 参考文献 biblatex
+\if@hnu@manualbib % 通过手动修改的 bibitem 输出参考文献。此处仅通过 natbib 重定义上标 \cite 和非上标 \parencite 指令
+    \RequirePackage[super,square]{natbib}
+    \NewDocumentCommand{\parencite}{o m}{%
+        \setcitestyle{square,numbers}%
+        \hspace{-.25\ccwd}%如果没有此命令，\parencite 和正文之间会产生奇怪的空白间距
+        \IfValueTF{#1}{\cite[#1]{#2}}{\cite{#2}}%
+    }
 \else
-  \if@hnu@authoryear
-    \RequirePackage[style=gb7714-2015ay]{biblatex} 
-  \fi
-\fi
+    % first pass options
+    \PassOptionsToPackage{
+      backend     = biber,
+      gbnamefmt   = lowercase,
+      gbpub       = false,
+      gbtitlelink = true,
+      sortlocale  = zh__pinyin,
+      uniquelist  = true,
+      isbn        = false,
+      doi         = false,
+      url         = false,
+      gbpunctin   = false,
+      gbfieldtype = true,
+      gbtype      = false, % 文献类型和载体标识符，例如期刊论文: true - [J], false - <什么都不输出>
+      % gbmedium    = false, % 文献载体标识，例如在线文章: true - [J/OL], false - [J]。当 gbtype == false 时，此选项无所谓设置什么都不会显示。 
+    }{biblatex}
+    % then load packages
+    \if@hnu@numerical
+        \RequirePackage[style=gb7714-2015]{biblatex}
+    \else
+        \if@hnu@authoryear
+            \RequirePackage[style=gb7714-2015ay]{biblatex}
+        \else
+            \ClassError{hnuthesis}{Unknown option about bibtype.}
+            % \RequirePackage{biblatex}
+        \fi
+    \fi
 
-% 关于 option - gbpunctin = false
-%   对于 inbook, incollection, inproceedings 类型的条目，文献标题满足格式 `title <in or incn> booktitle`
-%   gb7714-2015 规定 in = //, incn = //，然而部分学校或组织可能认为使用符号 // 很奇怪，gb7714-2015 提供了选项 gbpunction 控制该行为
-%   gbpunctuation = true (default) -> 按照 gb7714-2015 规定 in = //, incn = //
-%   gbpunctuation = false -> in = in, incn = 见 (这是 hnu 的规定)
+    % 关于 option - gbpunctin = false
+    %   对于 inbook, incollection, inproceedings 类型的条目，文献标题满足格式 `title <in or incn> booktitle`
+    %   gb7714-2015 规定 in = //, incn = //，然而部分学校或组织可能认为使用符号 // 很奇怪，gb7714-2015 提供了选项 gbpunction 控制该行为
+    %   gbpunctuation = true (default) -> 按照 gb7714-2015 规定 in = //, incn = //
+    %   gbpunctuation = false -> in = in, incn = 见 (这是 hnu 的规定)
 
-% 多作者截断关键字 et al -> 等
-\DefineBibliographyStrings{english}{
-        andincite         = {和},
-        andincitecn       = {和},
-        andothersincitecn = {等人},
-        andothersincite   = {等人},
-}
+    % 多作者截断关键字 et al -> 等
+    \DefineBibliographyStrings{english}{
+      andincite         = {和},
+      andincitecn       = {和},
+      andothersincitecn = {等人},
+      andothersincite   = {等人},
+    }
 
-% 学位论文需要额外说明学位论文级别 (with gbfieldtype = true)
-%   biblatex 会首先检查参考文献的 bib 条目中是否存在 type 域，如果不存在则按照以下方式说明
-%   按照 HNU 的要求，
-%     格式为，［学校及学位论文级别］.保存地点：保存单位
-%     例如，  湖南大学：博士学位论文. 长沙：湖南大学
-%   对于这样的输出要求，由于能力有限，暂时没法做到自动化显示参考文献
-\DefineBibliographyStrings{english}{
+    % 学位论文需要额外说明学位论文级别 (with gbfieldtype = true)
+    %     biblatex 会首先检查参考文献的 bib 条目中是否存在 type 域，如果不存在则按照以下方式说明
+    %     按照 HNU 的要求，
+    %         格式为，［学校及学位论文级别］.保存地点：保存单位
+    %         例如，  湖南大学：博士学位论文. 长沙：湖南大学
+    %     对于这样的输出要求，由于能力有限，暂时没法做到自动化显示参考文献
+    \DefineBibliographyStrings{english}{
     mathesis={str you want ma thesis},
     mathesiscn={硕士学位论文},
     phdthesis={str you want for phd thesis},
     phdthesiscn={博士学位论文}
-}
+    }
 
-% 对于包括 arxiv(@misc) 在内的 online 条目，不显示 urldate
-%   urldate is splitted into (urlyear, urlmonth, urlday)
-%   clear urlyear is enough, when urlyear is lacking, do not print urlmonth and urlday
-\AtEveryBibitem{%
+    % 对于包括 arxiv(@misc) 在内的 online 条目，不显示 urldate
+    %     urldate is splitted into (urlyear, urlmonth, urlday)
+    %     clear urlyear is enough, when urlyear is lacking, do not print urlmonth and urlday
+    \AtEveryBibitem{%
     \ifentrytype{online}{
         % \clearfield{url}%
         \clearfield{urlyear}
     }{}
-}
+    }
 
+    % Provice \printbibitembibliography -> 输出 biblatex 参考文献输出结果所对应的 bibitem 条目
+    \RequirePackage{biblatex2bibitem}
+\fi
 
 %% 链接
 \urlstyle{same}
@@ -778,21 +816,25 @@
 \declaretheorem[name={证明}, style=proofStyle, unnumbered]{Proof}
 \renewcommand{\proof}{\Proof} % 不太优雅的实现。declaretheorem[...]{} 只能定义新的环境，不能重新定义环境
 
+% 允许太长的公式断行、分页等（From TongjiThesis）
+\allowdisplaybreaks[4]
+\renewcommand\theequation{\ifnum \c@chapter>\z@ \thechapter.\fi\@arabic\c@equation}
+
 % 算法和代码：
 % 算法环境
-% \RequirePackage[algoruled, algochapter, lined, linesnumbered]{algorithm2e}
-% \renewcommand{\algorithmcfname}{算法}
-% \RequirePackage{listings}
-% \lstset{
-%     basicstyle=\small\ttfamily,
-%     xleftmargin=2pc,
-%     xrightmargin=2pc,
-%     frame=single,
-%     columns=flexible,
-%     numbers=left,
-% }
-% \newcommand{\rememberlines}{\xdef\rememberedlines{\number\value{AlgoLine}}}
-% \newcommand{\resumenumbering}{\setcounter{AlgoLine}{\rememberedlines}}
+\RequirePackage[algoruled, algochapter, lined, linesnumbered]{algorithm2e}
+\renewcommand{\algorithmcfname}{算法}
+\RequirePackage{listings}
+\lstset{
+    basicstyle=\small\ttfamily,
+    xleftmargin=2pc,
+    xrightmargin=2pc,
+    frame=single,
+    columns=flexible,
+    numbers=left,
+}
+\newcommand{\rememberlines}{\xdef\rememberedlines{\number\value{AlgoLine}}}
+\newcommand{\resumenumbering}{\setcounter{AlgoLine}{\rememberedlines}}
 
 \RequirePackage[skins]{tcolorbox}
 \newtcolorbox{talgorithm}[2][]{%

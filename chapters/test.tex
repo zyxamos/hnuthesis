@@ -54,8 +54,10 @@
 
 \subsection{参考文献输出样式}
 
-建议仅使用 biblatex 输出大致的结果，更细致的参考文献还需要输出 bibitem，然后手动调整。
-重点关照的文献类型
+特别说明，基于 biblatex，本模板只能输出基本符合要求的参考文献列表，不能保证输出的参考文献完全符合 HNU 的要求。
+如果发生无法解决的意外情况，参考\autoref{subsec.bibitem}。
+
+\subsection*{重点关照的文献输出类型}
 \begin{itemize}
     \item 硕博学位论文 \parencite{libaiThesis}
     \item arxiv 论文 \parencite{ishidaQuantitativeConvergenceDiscretization2023}
@@ -71,3 +73,29 @@
     \item \verb|type = {[湖南大学博士学位论文]}|
     \item \verb|school = {长沙：湖南大学}|
 \end{itemize}
+
+\subsection{手动调整参考文献样式}\label{subsec.bibitem}
+如果发生意外情况，参考文献的输出结果不符合 HNU 模板要求。
+建议完成毕业论文后，再使用 biblatex 输出 bibitem，并手动微调 bibitem 的信息进行更细致的调整。
+然而，这种微调方法的代价是，只能使用上标引用 \verb|\cite| 和非上标引用 \verb|\parencite| 两种文献引用类型，不能引用文献的作者、年份等等信息（因为我们不再使用 bib 数据库，而 bibitem 只有纯文本的输出信息，不能区分文献的作者、年份）。
+首先输出 bibtiem
+\begin{enumerate}
+    \item 在文档结尾处使用命令 \verb|\printbibitembibliography| 将 biblatex 输出结果所对应的 bibitem 列表 \verb|`thebibliography`| 输出到 PDF 的对应位置
+    % \begin{itemize}
+    %     \item \verb|\printbibitembibliography| 来自于 Package: biblatex2bibitem，并且它已经在 \verb|hnuthesis.cls| 中引入。
+    % \end{itemize}
+    \item 将 bibitem 列表复制到单独的 tex 文件中（例如 \verb|bibitem.tex|），接着对其中的参考文献输出样式进行细微的调整。其中 bibitem 列表 \verb|`thebibliography`| 的形式为
+    \begin{verbatim}
+        \begin{thebibliography}{99}
+            \bibitem{...}...
+            \bibitem{...}...
+            ... 
+        \end{thebibliography}
+    \end{verbatim}
+\end{enumerate}
+接着，根据 bibitem 引用参考文献
+\begin{enumerate}
+    \item \verb|\documentclass[..., manualbib]{hnuthesis}|，使用 manualbib 选项调用 hnu 模板类
+    \item 通过（\verb|.cls| 中定义的）上标 \verb|\cite| 和非上标 \verb|\parencite| 在正文中引用
+    \item 在 \verb|main.tex| 中使用 \verb|\input{bibitem.tex}| 输出参考文献
+\end{enumerate}

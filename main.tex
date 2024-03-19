@@ -2,6 +2,7 @@
 %!TEX program = xelatex
 
 \documentclass[doctor]{hnuthesis}
+% \documentclass[doctor, manualbib]{hnuthesis}
 \usepackage{subfigure}
 \usepackage{amsmath}
 \usepackage{algorithmicx,algpseudocode}
@@ -68,14 +69,19 @@
 \input{chapters/test}
 \input{chapters/summary}
 
-% 参考文献
+% 参考文献 (biblatex)
 \printbibliography[heading=bibintoc]\clearpage
+% \printbibitembibliography % print bibitem
 
-\appendix
+% 参考文献 (manually)
+% \input{bibitem.tex}
+% \addcontentsline{toc}{chapter}{参考文献}
+
+% \appendix
 \input{chapters/publications}
 \input{chapters/projects}
 
-\backmatter
+% \backmatter
 \input{chapters/acknowledgements}
 
 \end{document}
