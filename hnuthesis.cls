@@ -473,7 +473,8 @@
     \thispagestyle{plain}
     \pagenumbering{Roman} % 从原创性声明页面开始 Roman 计数
     \setcounter{page}{1}
-    \addcontentsline{toc}{chapter}{\normalfont\sffamily 学位论文原创性声明和学位论文版权使用授权书} % 目录中不使用粗体, //TODO: 此部分产生的超链接将跳转到错误的地方
+    \phantomsection % set an anchor where \addcontentsline can refer to
+    \addcontentsline{toc}{chapter}{\normalfont\sffamily 学位论文原创性声明和学位论文版权使用授权书} % 目录中不使用粗体
     \setfontsize{12.5pt}[20pt]
     \vspace*{-0.15cm}
     \begin{center}
