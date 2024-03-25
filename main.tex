@@ -1,15 +1,32 @@
 %!TEX encoding = UTF-8 Unicode
 %!TEX program = xelatex
 
-\documentclass[doctor]{hnuthesis}
-% \documentclass[doctor, manualbib]{hnuthesis}
-\usepackage{subfigure}
-\usepackage{amsmath}
-\usepackage{algorithmicx,algpseudocode}
-\usepackage{float}
+% 使用 Biblatex 编译参考文献
+\documentclass[numbers]{hnuthesis}
+\addbibresource{references.bib} % 参考文献
 
-% 参考文献
-\addbibresource{references.bib}
+% 手动调整参考文献
+% \documentclass[manualbib]{hnuthesis}
+
+% 算法
+\usepackage{algorithm2e}
+
+% 插图
+\usepackage{graphicx, subfigure}
+\usepackage{float} % Provide float option 'H'
+
+% Math
+\usepackage{mathrsfs} % Provide \mathscr
+% \usepackage{eucal} % redefine \mathcal{}: from "Computer Modern calligraphic letters" to "Euler script letter"
+% 常用的数学字体
+%   \mathbb{}, \mathcal{}, \mathscr{}, \mathfrak
+% 根据不同研究方向的习惯使用数学字体，例如
+%   \mathbb  -> 集合
+%   \mathscr -> 集族
+%   \mathcal -> 映射、算子
+\newcommand{\setl}[1]{\mathbb{#1}} % set letter
+\newcommand{\setfaml}[1]{\mathscr{#1}} % set family letter
+\newcommand{\mapl}[1]{\mathcal{#1}} % map letter
 
 % 学校代码
 \hnucode{10532}

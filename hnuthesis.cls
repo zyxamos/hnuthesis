@@ -2,27 +2,6 @@
 \ProvidesClass{hnuthesis}
     [2017/07/19 v0.1 HNU thesis template]
 
-% bibtype = {numerical, authoryear}, manual}
-% \RequirePackage{xkeyval}
-% \newif\if@hnu@numerical
-% \newif\if@hnu@authoryear
-% \@hnu@numericaltrue % 参考文献默认采取数字引用
-% \DeclareOptionX{bibtype}[numerical]{% default value: numerical - 参考文献默认采取数字引用
-  
-% }
-% \define@choicekey*+{hnuthesis.cls}{bibtype}[\val\nr]{numerical,authoryear}{%
-%   \ifcase\nr\relax
-%     \@hnu@numericaltrue
-%     \@hnu@authoryearfalse
-%   \or
-%     \@hnu@numericalfalse
-%     \@hnu@authoryeartrue
-%   \fi
-% }{%
-%   \PackageWarning{hnuthesis}{Error input for option "bibtype"}%
-% }
-% \ProcessOptionsX
-
 %% Options
 \newif\if@hnu@numerical
 \newif\if@hnu@authoryear
@@ -314,7 +293,6 @@
     % \pdfbookmark[0]{Title page}{entitlepage}
     \make@entitle
     \restoregeometry
-    % \pdfbookmark[0]{原创性声明}{statement}
     \make@statement
 }
 
