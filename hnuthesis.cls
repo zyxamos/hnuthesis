@@ -157,13 +157,11 @@
   \fancyhead[CE]{\setfontsize{9pt}\hnu@title}%
   \fancyhead[CO]{\setfontsize{9pt}\hnu@yemeiname}
   \fancyfoot[C]{\setfontsize{9pt}\thepage}
-  \fancyheadoffset[LO,LE]{3mm}
-  \fancyheadoffset[RO,RE]{-3mm}
   \def\headrule{
     \if@fancyplain\let\headrulewidth\plainheadrulewidth\fi%
-    \hrule\@height 1.0pt \@width\headwidth\vskip 1pt %上面线为1pt粗
-    \hrule\@height 0.5pt \@width\headwidth  %下面0.5pt粗
-    \vskip-2\headrulewidth\vskip-1pt}      %两条线的距离1pt
+    \hrule\@height 1.5pt \@width\headwidth\vskip 2pt %上面线为1.5pt粗
+    \hrule\@height 0.6pt \@width\headwidth  %下面0.6pt粗
+    \vskip-2\headrulewidth\vskip-1pt}      %两条线的距离2pt
     \vspace{7mm}
 }%
 
