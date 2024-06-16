@@ -40,7 +40,7 @@
 \setsansfont{Arial} % \sf, 无衬线字体
 \setmonofont{Courier New}
 % \setCJKmainfont{SimSun}
-% \setCJKsansfont{SimHei}
+\setCJKsansfont{SimHei}
 \RequirePackage{hyperref}
 \hypersetup{
     bookmarksopen=true,
@@ -156,12 +156,12 @@
   \fancyhf{}%
   \fancyhead[CE]{\setfontsize{9pt}\hnu@title}%
   \fancyhead[CO]{\setfontsize{9pt}\hnu@yemeiname}
-  \fancyfoot[C]{\setfontsize{9pt}\thepage}
+  \fancyfoot[C]{\setfontsize{10.5pt}\thepage}
   \def\headrule{
     \if@fancyplain\let\headrulewidth\plainheadrulewidth\fi%
     \hrule\@height 1.5pt \@width\headwidth\vskip 2pt %上面线为1.5pt粗
     \hrule\@height 0.6pt \@width\headwidth  %下面0.6pt粗
-    \vskip-2\headrulewidth\vskip-1pt}      %两条线的距离2pt
+    \vskip-2\headrulewidth\vskip-1pt}      %两条线的距离1pt
     \vspace{7mm}
 }%
 
@@ -219,9 +219,9 @@
     chapter = {
         format      = \centering\sffamily\bfseries\setfontsize{18pt},
         nameformat  = {},
-        numberformat += \rmfamily,
+        % numberformat += \rmfamily,
         % titleformat = \spacetitle,
-        number      = \thechapter,
+        number      = {{\rmfamily\thechapter}},
         aftername   = \hspace{\ccwd},
         beforeskip  = -1.5em, % 24bp - 31bp
         afterskip   = 1.5em, % 18bp - 10bp
@@ -504,10 +504,14 @@
 }{}
 
 \newcommand\keywords[1]{%
-  \par\phantom{empty}\par\noindent\hangindent=4\ccwd\relax%
+  % \par\phantom{empty}\par%
+  \vspace*{12pt}%
+  \noindent\hangindent=4\ccwd\relax%
   \sffamily\textbf{关键词}：#1}
 \newcommand\enkeywords[1]{%
-  \par\phantom{empty}\par\noindent\hangindent=5.3em\relax%
+  % \par\phantom{empty}\par%
+  \vspace*{12pt}%
+  \noindent\hangindent=5.3em\relax%
   \textbf{Key Words}: #1}
 
 % 目录
@@ -544,16 +548,25 @@
       {\setfontsize{12.5pt}}
       {\tableautorefname\hspace*{0.5em}\thecontentslabel\quad}
       {}{\hnu@leaders\contentspage}
-      % 为了让图目录另页起，重新定义 \cs{listoffigures}
+
+% 为了让图目录另页起，重新定义 \cs{listoffigures}
 \renewcommand\listoffigures{%
     \clearpage
     \hnu@chapter{\listfigurename}%
-    \@starttoc{lof}}
-    % 表目录同样
+    \begingroup
+    \renewcommand{\addvspace}[1]{}% 避免不同章节的图片索引直接出现过大的间距
+    \@starttoc{lof}
+    \endgroup
+}
+% 表目录
 \renewcommand\listoftables{%
     \clearpage
     \hnu@chapter{\listtablename}%
-    \@starttoc{lot}}
+    \begingroup
+    \renewcommand{\addvspace}[1]{}% 避免不同章节的表格索引直接出现过大的间距
+    \@starttoc{lot}
+    \endgroup
+}
 
 \newenvironment{notation}{%
     \cleardoublepage
@@ -650,12 +663,15 @@
 
 %% 参考文献 biblatex
 \if@hnu@manualbib % 通过手动修改的 bibitem 输出参考文献。此处仅通过 natbib 重定义上标 \cite 和非上标 \parencite 指令
-    \RequirePackage[super,square]{natbib}
+    \RequirePackage[super,square,comma,sort&compress]{natbib}
     \NewDocumentCommand{\parencite}{o m}{%
-        \setcitestyle{square,numbers}%
+        \begingroup
+        \setcitestyle{numbers}%
         \hspace{-.25\ccwd}%如果没有此命令，\parencite 和正文之间会产生奇怪的空白间距
         \IfValueTF{#1}{\cite[#1]{#2}}{\cite{#2}}%
+        \endgroup%
     }
+    % \setlength{\bibsep}{1ex} % vertical spacing between references
 \else
     % first pass options
     \PassOptionsToPackage{
