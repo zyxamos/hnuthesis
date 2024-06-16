@@ -83,11 +83,22 @@
 
 按照 HNU 的要求，硕博学位论文的参考文献输出格式为 \fbox{[学校及学位论文级别].保存地点：保存单位}。
 例如 \fbox{[湖南大学：博士学位论文]. 长沙：湖南大学}。
-对于这样的输出要求，由于能力有限，暂时没法做到自动化输出参考文献。
+对于这样的输出要求，由于时间精力有限，暂时没法做到自动化输出参考文献。
 一种简单的方式为手动修改 bib 文件中 \verb|@phdthesis| 条目的 type 和 school 域
 \begin{itemize}
     \item \verb|type = {[湖南大学博士学位论文]}|
     \item \verb|school = {长沙：湖南大学}|
+\end{itemize}
+
+\subsection*{关于 arxiv 等在线论文}
+
+要求的格式为 "<作者姓名>. <文献标题>. <线上网址>, <年份/日期>"。
+一下给出一共参考示例 (基于 \parencite{ishidaQuantitativeConvergenceDiscretization2023} )
+
+\begin{itemize}
+    \item Ishida S, Lavenant H.
+    Quantitative convergence of a discretization of dynamic optimal transport using the dual formulation.
+    \href{https://arxiv.org/abs/2312.12213}{\nolinkurl {arxiv.org/abs/2312.12213}}, 2023.
 \end{itemize}
 
 \subsection{手动调整参考文献样式}\label{subsec.bibitem}
