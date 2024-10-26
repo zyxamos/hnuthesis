@@ -25,7 +25,7 @@
   \PassOptionsToClass{oneside}{book}
 \fi
 \PassOptionsToPackage{no-math}{fontspec}
-\LoadClass[UTF8, a4paper, openany, zihao=-4]{ctexbook}[2015/05/14]
+\LoadClass[UTF8, a4paper, openany, zihao=-4, fontset=none]{ctexbook}[2015/05/14]
 \RequirePackage{etoolbox}
 \@ifclasslater{ctexbook}{2015/05/14}{}{%
     \ClassError{hnuthesis}{%
@@ -39,8 +39,9 @@
 \setmainfont{Times New Roman} % \rm, 衬线字体
 \setsansfont{Arial} % \sf, 无衬线字体
 \setmonofont{Courier New}
-% \setCJKmainfont{SimSun}
-\setCJKsansfont{SimHei}
+\setCJKmainfont[Path=fonts/, BoldFont={SIMHEI.TTF}, ItalicFont={SIMKAI.TTF}]{SIMSUN.TTC}
+\setCJKsansfont[Path=fonts/]{SIMHEI.TTF}
+\setCJKmonofont[Path=fonts/]{SIMSUN.TTC}
 \RequirePackage{hyperref}
 \hypersetup{
     bookmarksopen=true,
@@ -829,10 +830,10 @@
 \newcommand{\rememberlines}{\xdef\rememberedlines{\number\value{AlgoLine}}}
 \newcommand{\resumenumbering}{\setcounter{AlgoLine}{\rememberedlines}}
 
-\RequirePackage[skins]{tcolorbox}
-\newtcolorbox{talgorithm}[2][]{%
-  blanker,float=tbp,grow to left by=#2,grow to right by=#2,
-  before upper={\begin{algorithm}[H]},
-  after upper={\end{algorithm}},
-  #1
-}
+% \RequirePackage[skins]{tcolorbox}
+% \newtcolorbox{talgorithm}[2][]{%
+%   blanker,float=tbp,grow to left by=#2,grow to right by=#2,
+%   before upper={\begin{algorithm}[H]},
+%   after upper={\end{algorithm}},
+%   #1
+% }
